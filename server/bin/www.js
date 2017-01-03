@@ -8,6 +8,7 @@ var app = require('../app');
 const debug = require('debug')('app:server');
 const http = require('http');
 const fs = require('fs');
+const opn = require('opn')
 /**
  * Get port from environment and store in Express.
  */
@@ -26,6 +27,7 @@ require('../core/socket')(server);
  */
 
 server.listen(port);
+
 server.on('error', onError);
 server.on('listening', onListening);
 

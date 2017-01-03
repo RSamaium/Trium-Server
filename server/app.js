@@ -4,7 +4,6 @@ var express  = require("express");
 var _ = require("lodash");
 var mongo = require('./mongo');
 
-
 var app = express();
 
 mongo(app);
