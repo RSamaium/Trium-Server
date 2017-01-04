@@ -1,3 +1,5 @@
+const utils = require('./utils')
+
 const webpack = require('webpack')
 const base = require('./webpack.base.config')
 const vueConfig = require('./vue-loader.config')
@@ -35,12 +37,17 @@ if (process.env.NODE_ENV === 'production') {
   // vueConfig is already included in the config via LoaderOptionsPlugin
   // here we overwrite the loader config for <style lang="stylus">
   // so they are extracted.
+
+  vueConfig.loaders = utils.cssLoaders({extract: true})
+
+  /*
   vueConfig.loaders = {
-    stylus: ExtractTextPlugin.extract({
-      loader: 'css-loader!stylus-loader',
+    css: ExtractTextPlugin.extract({
+      loader: 'css-loader',
       fallbackLoader: 'vue-style-loader' // <- this is a dep of vue-loader
     })
   }
+  */
 
   config.plugins.push(
     new ExtractTextPlugin('styles.[hash].css'),

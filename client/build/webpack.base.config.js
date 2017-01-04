@@ -1,4 +1,5 @@
 const path = require('path')
+const utils = require('./utils')
 const vueConfig = require('./vue-loader.config')
 
 module.exports = {
