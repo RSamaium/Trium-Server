@@ -19,6 +19,6 @@ module.exports = {
       port: '7000'
   },
   paths: {
-      contentPath: path.join(__dirname, '../../client')
+      contentPath: path.join(__dirname, '../../client/static')
   }
 }

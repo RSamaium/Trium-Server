@@ -7,6 +7,6 @@ module.exports = {
       username: ''
   },
   paths: {
-      contentPath: path.join(__dirname, '../../client/dist')
+      contentPath: path.join(__dirname, '../../client/dist/static')
   }
 }

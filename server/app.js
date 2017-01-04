@@ -15,6 +15,7 @@ _.each(
         "main",
         "token",
         "routes",
+        "renderer",
         "errors"
 
     ], function(middleware) {

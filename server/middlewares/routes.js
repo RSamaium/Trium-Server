@@ -33,9 +33,5 @@ module.exports = function(app) {
         }
     }
 
-    app.all('/*', function(req, res) {
-        res.sendfile(config.get('paths', 'contentPath') + '/index.html');
-    });
-
     return app;
 }
