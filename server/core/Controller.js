@@ -56,9 +56,16 @@ class Controller {
                 query = self._populate(req, query);
 
                 query.exec(function(err, entity) {
-                    if (!(err || entity)) reject(new Error(err));
+                    if (!entity) {
+                      reject(new error.NotFoundError("Resource not found"));
+                      return;
+                    }
+                    if (err) {
+                       reject(new Error(err));
+                       return;
+                    }
                     resolv(entity);
-                })
+                });
 
          }) .then(function(entity) {
 
@@ -164,7 +171,7 @@ class Controller {
           obj = _.merge(obj, virtual);
         }
         res.json(obj);
-      });
+      }).catch(next);
     }
 
     _response(req, data, type) {
@@ -316,7 +323,11 @@ class Controller {
         if (req.parent) {
             req.entity[req.parent.name] = req.parent.id;
         }
-        this.update(req, res, next);
+
+        this._permission(req).then(() => {
+          this.update(req, res, next);
+        }).catch(next);
+
     }
 
     update(req, res, next) {
@@ -379,8 +390,6 @@ class Controller {
                 if (self.permissionFilter[modePermission] && _.indexOf(self.permissionFilter[modePermission], key) != -1) {
                     continue;
                 }
-
-
 
                 if (val !== undefined) {
                     if (!schema[key].type && _.isString(val)) {

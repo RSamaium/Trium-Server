@@ -1,0 +1,14 @@
+extends /index.pug
+
+block container
+  mj-section(background-color='#fafafa')
+    mj-column(width='400')
+      mj-text(mj-class='h1') {{welcome | t:#{name}}}
+      mj-text
+        | {{thank you for your registration | t}}
+      if activation
+        mj-text
+          | {{activate help | t}}
+        mj-button(mj-class='primary' href=url) {{activate my account | t}}
+      else
+        mj-button(mj-class='primary' href=url) {{login | t}}

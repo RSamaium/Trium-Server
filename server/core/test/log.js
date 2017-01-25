@@ -1,6 +1,4 @@
-const colors = require('colors');
-
-module.exports.log = function(err, res, done, cb) {
+module.exports = function(err, res, done, cb) {
 
   cb = cb || (new Function())
 

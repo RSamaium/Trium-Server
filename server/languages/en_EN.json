@@ -1,0 +1,13 @@
+[{
+    "hello": "hello %s",
+    "welcome": "welcome to %s",
+    "thank you for your registration": "thank you for your registration",
+    "activate my account": "activate my account",
+    "activate help": "there is one last step to validate your email address. Click on the button below to activate your account:",
+    "forgotten password help": "you want to reset your password. By clicking on the link below, you will be redirected to a page to reset your password",
+    "forgotten password": "forgotten password",
+    "reset password": "reset my password",
+    "login": "to log in"
+}, {
+
+}]

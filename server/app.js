@@ -1,12 +1,17 @@
 'use strict'
 
-var express  = require("express");
-var _ = require("lodash");
-var mongo = require('./mongo');
+const express  = require("express");
+const _ = require("lodash");
+const mongo = require('./mongo');
+const Languages = require('languages-js')
 
 var app = express();
 
 mongo(app);
+
+Languages.all(`${__dirname}/languages/`)
+
+const options = []
 
 _.each(
     [
@@ -15,13 +20,12 @@ _.each(
         "main",
         "token",
         "routes",
-        "renderer",
+        ...options,
         "errors"
 
     ], function(middleware) {
     require("./middlewares/" + middleware)(app);
 });
-
 
 
 module.exports = app;

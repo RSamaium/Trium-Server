@@ -4,3 +4,4 @@ client/dist/
 client/test/unit/coverage
 client/test/e2e/reports
 .DS_Store
+server/config/default.js

@@ -11,6 +11,10 @@ module.exports = function(app) {
     require("./middlewares/passport")(app);
     let passport = require("./middlewares/passport-strategies/local")(app);
 
+    router.post('/forgotten-password', me.forgottenPassword.bind(me));
+    router.post('/reset-password', me.resetPassword.bind(me));
+    router.post('/enable', me.enable.bind(me));
+
     router.post('/login', passport.authenticate('local'), function(req, res, next) {
        res.json(req.user);
     });

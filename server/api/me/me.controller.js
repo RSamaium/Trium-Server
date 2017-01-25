@@ -3,7 +3,9 @@
 const UserController = require("../user/user.controller");
 const jwt    = require('jsonwebtoken');
 const _    = require('lodash');
-
+const Email = require('../../services/email');
+const config = require('../../config');
+const error = require('../../errors');
 
 class MeController extends UserController {
 
@@ -19,15 +21,61 @@ class MeController extends UserController {
                 return done(null, false, { message: 'Incorrect password.' });
             }
 
-            var token = jwt.sign(user.toObject(), this.app.get('tokenSecret'), {
-               expiresInMinutes: 1440
-            });
+            var token = jwt.sign(user.toObject(), this.app.get('tokenSecret'));
 
             return done(null, {
                 _id: user._id,
                 token
             });
         });
+     }
+
+     forgottenPassword(req, res, next) {
+       let {email} = req.body;
+       this.getEntity().findOne({ email }).then(user => {
+         if (!user) {
+           throw new error.NotFoundError("User not found");
+         }
+         return jwt.sign({ email, _id: user._id }, config.get('token', 'resetPassword'), { expiresIn: '2h' });
+       }).then(key => {
+         return Email.send({
+           template: {
+             name: 'forgotten-password.pug',
+             data: {
+               url: `${config.url}/reset-password?key=${key}`
+             }
+           },
+           to: email,
+           subject: `${config.name} - ${'reset password'.t()}`
+         })
+       }).then(ret => {
+         res.status(204).end();
+       }).catch(next)
+     }
+
+     updateWithKey(keyName, schema, req, res, next) {
+       const {key} = req.body;
+
+       jwt.verify(key, config.get('token', keyName), (err, decoded) => {
+         if (err) {
+           return next(err);
+         } else {
+           this.getEntity().findByIdAndUpdate(decoded._id, schema).then(ret => {
+             if (!ret) {
+               throw new error.NotFoundError("User not found");
+             }
+             res.status(204).end();
+           }).catch(next)
+         }
+       });
+     }
+
+     resetPassword(req, res, next) {
+       this.updateWithKey('resetPassword', {password: req.body.password}, req, res, next)
+     }
+
+     enable() {
+       this.updateWithKey('enable', {enabled: true}, req, res, next)
      }
 
      setSession(user, done) {

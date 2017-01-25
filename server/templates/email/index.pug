@@ -1,0 +1,21 @@
+mjml
+  mj-head
+    mj-title #{name}
+    mj-attributes
+      include /attributes
+    mj-style
+      include /style.css
+    mj-font(name='Raleway', href='https://fonts.googleapis.com/css?family=Raleway')
+  mj-body
+    mj-container
+      block header
+        mj-section(background-color='#f0f0f0')
+          mj-column
+            mj-text(font-size='20', color='#626262')
+              | #{name}
+      block container
+      block footer
+        mj-section(background-color='#e7e7e7', padding='0')
+          mj-column(vertical-align='middle')
+            mj-text(color='#525252', font-size='9px')
+              p.center Copyright #{year}, #{author}

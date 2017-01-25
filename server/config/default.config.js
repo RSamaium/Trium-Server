@@ -2,11 +2,11 @@ const path = require('path');
 
 module.exports = {
   token: {
-    secret: 'helloworld',
-    resetPassword: 'helloworld',
-    enable: 'helloworld'
+    secret: '',
+    resetPassword: '',
+    enable: ''
   },
-  url: 'http://localhost:8080',
+  url: 'http://localhost:3000',
   mail: {},
   database: {
       client: 'mongodb',
@@ -16,9 +16,9 @@ module.exports = {
       username: ''
   },
   mailgun: {
-      from: 'Trium <sam@webcreative5.net>',
-      apiKey: 'key-f3ddef4faf6985aeb81a02b6d8995d26',
-      domain: 'sandboxa1ced1d8dfd94576a3ac3e7875138b56.mailgun.org'
+      from: '',
+      apiKey: '',
+      domain: ''
   },
   server: {
       host: '127.0.0.1',
@@ -27,5 +27,5 @@ module.exports = {
   paths: {
       contentPath: path.join(__dirname, '../../client/static')
   },
-  userActivation: 'auto'
+  userActivation: 'auto' // email, admin or auto
 }
