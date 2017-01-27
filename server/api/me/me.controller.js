@@ -10,8 +10,11 @@ const error = require('../../errors');
 class MeController extends UserController {
 
      login(username, password, done) {
-
-        this.getEntity().findOne({ email: username },  (err, user) => {
+        if (!username) {
+          done(new error.NotFoundError('Username not found'))
+          return;
+        }
+        this.getEntity().findOne({ email: username }, (err, user) => {
             if (err) { return done(err); }
 
             if (!user) {
@@ -20,14 +23,48 @@ class MeController extends UserController {
             if (!user.validPassword(password)) {
                 return done(null, false, { message: 'Incorrect password.' });
             }
-
+            delete user.password;
             var token = jwt.sign(user.toObject(), this.app.get('tokenSecret'));
-
             return done(null, {
                 _id: user._id,
                 token
             });
         });
+     }
+
+     loginTo(platform) {
+       const User = this.getEntity();
+       const connect = (token, profile, done) => {
+         let {id, email, username} = profile;
+         if (!id) {
+           done(new error.NotFoundError('User not found'))
+           return;
+         }
+         User.findOne({ [`platforms.${platform}.id`]: id }, '-password').then(user => {
+           if (!user) {
+             user = new User();
+             user.email = email;
+             user.username = username;
+             user.password = Math.random();
+             user.platforms.facebook = { token, id }
+             if (this.save) this.save(user);
+             return user.save()
+           }
+           return user;
+         }).then(user => {
+           let appToken = jwt.sign(user.toObject(), this.app.get('tokenSecret'));
+           return done(null, {
+               _id: user._id,
+               token: appToken
+           });
+         }).catch(done)
+       }
+
+       return (accessToken, refreshToken, profile, cb) => {
+         if (platform == 'facebook') {
+           connect(accessToken, profile, cb)
+         }
+       }
      }
 
      forgottenPassword(req, res, next) {
@@ -79,7 +116,6 @@ class MeController extends UserController {
      }
 
      setSession(user, done) {
-        delete user.password;
         done(null, user._id);
      }
 

@@ -33,7 +33,7 @@ class UserController extends Controller {
         return req.query.page;
     }
 
-    save(user, req) {
+    save(user) {
       let data = {}
       if (config.userActivation == 'email') {
         let key = jwt.sign({ email: user.email, _id: user._id }, config.get('token', 'enable'), { expiresIn: '2h' })

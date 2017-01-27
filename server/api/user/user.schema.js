@@ -30,6 +30,12 @@ module.exports = function(app) {
         lang: {
           type: String,
           default: 'en_EN'
+        },
+        platforms: {
+          facebook: {
+            token: String,
+            id: String
+          }
         }
     }
 

@@ -33,6 +33,7 @@ describe('User Test', function() {
                 expect(data.username).to.equal(obj.username);
                 expect(data.email).to.equal(obj.email);
                 expect(data.enabled).to.be.true;
+                expect(data.password).to.not.equal(obj.password); // password is hashed
                 rest.setId(data._id);
               });
             });

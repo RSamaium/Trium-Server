@@ -1,13 +1,22 @@
 const path = require('path');
 
+const URL = 'http://localhost:3000';
+
 module.exports = {
   token: {
-    secret: '',
-    resetPassword: '',
-    enable: ''
+    secret: 'helloworld',
+    resetPassword: 'helloworld',
+    enable: 'helloworld'
   },
-  url: 'http://localhost:3000',
+  url: URL,
   mail: {},
+  auth: {
+    facebook:{
+      clientID: '',
+      clientSecret: '',
+      callbackURL: `${URL}/api/me/login/facebook/callback`
+    }
+  },
   database: {
       client: 'mongodb',
       host: 'localhost',
@@ -27,5 +36,5 @@ module.exports = {
   paths: {
       contentPath: path.join(__dirname, '../../client/static')
   },
-  userActivation: 'auto' // email, admin or auto
+  userActivation: 'auto'
 }

@@ -1,13 +1,22 @@
 const path = require('path');
 
+const URL = 'http://9365eb99.ngrok.io';
+
 module.exports = {
   token: {
     secret: 'helloworld',
     resetPassword: 'helloworld',
     enable: 'helloworld'
   },
-  url: 'http://localhost:8080',
+  url: URL,
   mail: {},
+  auth: {
+    facebook:{
+      clientID: '586019424873205',
+      clientSecret: 'e38e8fab94dd29fedbd16fa718040172',
+      callbackURL: `${URL}/api/me/login/facebook/callback`
+    }
+  },
   database: {
       client: 'mongodb',
       host: 'localhost',
