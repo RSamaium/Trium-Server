@@ -26,5 +26,4 @@ configObj.get = function(...keys) {
   return _.get(configObj, keys) || {}
 }
 
-
 module.exports = configObj;

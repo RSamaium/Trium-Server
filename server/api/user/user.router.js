@@ -1,16 +1,13 @@
-const express = require('express');
-const defineRestRoutes = require('../../core/route');
-const model = require("../../core/Model");
+const express = require('express')
+const defineRestRoutes = require('../../core/route')
+const model = require('../../core/Model')
 
-module.exports = function(app) {
+module.exports = function (app) {
+  const user = model('User', app),
+    router = express.Router()
 
-  let user = model("User", app),
-      router = express.Router();
+  defineRestRoutes(router, user, 'user_id')
 
-
-  defineRestRoutes(router, user, "user_id");
-
-  app.use('/api/users', router);
-
-  return app;
+  app.use('/api/users', router)
+  return app
 }

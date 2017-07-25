@@ -2,7 +2,7 @@ const validate = require("../../validates");
 const uniqid = require('uniqid');
 const config = require('../../config');
 
-module.exports = function(app) {
+module.exports = function (app) {
 
     return {
         username: {
@@ -28,14 +28,14 @@ module.exports = function(app) {
             default: Date.now,
         },
         lang: {
-          type: String,
-          default: 'en_EN'
+            type: String,
+            default: 'en_EN'
         },
         platforms: {
-          facebook: {
-            token: String,
-            id: String
-          }
+            facebook: {
+                token: String,
+                id: String
+            }
         }
     }
 

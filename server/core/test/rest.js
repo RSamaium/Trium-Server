@@ -1,15 +1,15 @@
 const request = require('supertest');
-const {expect} = require('chai');
+const { expect } = require('chai');
 const colors = require('colors');
 const _ = require('lodash');
 const Faker = require('faker');
 const log = require('./log');
-const {Error403} = require('./errors');
+const { Error403 } = require('./errors');
 const config = require('../../config');
 const API = '/api';
 
 class TestRest {
-  constructor(app, uri, options={}) {
+  constructor(app, uri, options = {}) {
     this._uri = uri;
     this.app = app;
     this.options = options;
@@ -32,11 +32,8 @@ class TestRest {
   get me() {
     return this._me;
   }
-  logout() {
-    this._token = null;
-  }
-  login(model) {
 
+  createUser(model) {
     const email = config.mailgun.to || 'c0b17f32e6384d7cd46@yopmail.com';
 
     model = model || this.app.get('Model.User');
@@ -53,6 +50,15 @@ class TestRest {
     before(done => {
       user.save(done);
     });
+    return user
+  }
+
+  logout() {
+    this._token = null;
+  }
+  login(model) {
+
+    const { email } = this.createUser(model)
 
     it('Login', done => {
       request(this.app)
@@ -71,7 +77,7 @@ class TestRest {
         });
     });
   }
-  loginAndMe(model){
+  loginAndMe(model) {
     this.login(model);
     it('GET /me', done => {
       request(this.app)
@@ -95,9 +101,9 @@ class TestRest {
     if (method == 'query') {
       method = 'get';
     }
-    let r =  request(this.app)[method](uri);
+    let r = request(this.app)[method](uri);
 
-    if (this._token){
+    if (this._token) {
       r.set('x-access-token', this._token);
     }
 
@@ -129,23 +135,23 @@ class TestRest {
   allForbidden() {
 
     it(`POST ${this._uri}`, done => {
-        Error403(this.post(), done);
+      Error403(this.post(), done);
     });
 
     it(`GET ${this._uri}/:id`, done => {
-        Error403(this.get(), done);
+      Error403(this.get(), done);
     });
 
     it(`GET ${this._uri}`, done => {
-        Error403(this.query(), done);
+      Error403(this.query(), done);
     });
 
     it(`PUT ${this._uri}/:id`, done => {
-        Error403(this.put(), done);
+      Error403(this.put(), done);
     });
 
     it(`DELETE ${this._uri}/:id`, done => {
-        Error403(this.delete(), done);
+      Error403(this.delete(), done);
     });
   }
   tests(schema) {
@@ -155,20 +161,20 @@ class TestRest {
 
     before(() => {
       for (let key in schema) {
-         let {type, canChange, value} = schema[key];
-         let faker = _.get(Faker, type)
-         if (faker) {
-           schemaPost[key] = faker();
-           if (canChange) {
-             schemaPut[key] = faker();
-           }
-         }
-         else if (type == 'get'){
-           schemaPost[key] = _.get(this, value);
-           if (canChange) {
-             schemaPut[key] = _.get(this, value);
-           }
-         }
+        let { type, canChange, value } = schema[key];
+        let faker = _.get(Faker, type)
+        if (faker) {
+          schemaPost[key] = faker();
+          if (canChange) {
+            schemaPut[key] = faker();
+          }
+        }
+        else if (type == 'get') {
+          schemaPost[key] = _.get(this, value);
+          if (canChange) {
+            schemaPut[key] = _.get(this, value);
+          }
+        }
       }
     });
 
@@ -181,8 +187,8 @@ class TestRest {
     }
 
     it(`POST ${this._uri}`, done => {
-        console.log('POST', JSON.stringify(schemaPost).yellow)
-        this.post(schemaPost)
+      console.log('POST', JSON.stringify(schemaPost).yellow)
+      this.post(schemaPost)
         .expect(200)
         .end((err, res) => {
           log(err, res, done, data => {
@@ -193,46 +199,46 @@ class TestRest {
     });
 
     it(`GET ${this._uri}/:id`, done => {
-        this.get()
-            .expect(200)
-            .end(function(err, res) {
-              log(err, res, done, loopExpect);
-            });
+      this.get()
+        .expect(200)
+        .end(function (err, res) {
+          log(err, res, done, loopExpect);
+        });
     });
 
     it(`GET ${this._uri}`, done => {
-        this.query()
-            .expect(200)
-            .end(function(err, res) {
-              log(err, res, done, data => {
-                loopExpect(data[0]);
-              });
-            });
+      this.query()
+        .expect(200)
+        .end(function (err, res) {
+          log(err, res, done, data => {
+            loopExpect(data[0]);
+          });
+        });
     });
 
     it(`PUT ${this._uri}/:id`, done => {
       console.log('PUT', JSON.stringify(schemaPut).yellow)
       this.put(schemaPut)
-          .expect(200)
-          .end(function(err, res) {
-            log(err, res, done, data => {
-              for (let key in data) {
-                if (schemaPut[key]) {
-                  expect(data[key]).to.equal(schemaPut[key]);
-                }
+        .expect(200)
+        .end(function (err, res) {
+          log(err, res, done, data => {
+            for (let key in data) {
+              if (schemaPut[key]) {
+                expect(data[key]).to.equal(schemaPut[key]);
               }
-            });
+            }
           });
+        });
     });
 
 
     it(`DELETE ${this._uri}/:id`, done => {
-        this.delete()
-            .expect(204)
-            .end(function(err, res) {
-              log(err, res, done);
-            });
-     });
+      this.delete()
+        .expect(204)
+        .end(function (err, res) {
+          log(err, res, done);
+        });
+    });
   }
 }
 

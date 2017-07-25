@@ -1,19 +1,21 @@
-const {expect} = require('chai');
+const { expect } = require('chai');
 const request = require('supertest');
 const app = require('../../app');
 const mongoose = require('mongoose');
-const {log, errors, TestRest} = require('../../core/test');
+const { log, errors, TestRest } = require('../../core/test');
 const config = require('../../config');
 const _ = require('lodash');
 
-const {Error403, Error400} = errors;
+const { Error403, Error400 } = errors;
 const User = app.get('Model.User');
 
-describe('Me Test', function() {
+describe('Me Test', function () {
 
-  let rest = new TestRest(app, '/me', {id: false});
+  let rest = new TestRest(app, '/me', { id: false });
 
-  describe('no connected', function() {
+  describe('no connected', function () {
+
+    rest.createUser()
 
     it('GET /me', done => {
       Error400(rest.get(), done);
@@ -26,7 +28,7 @@ describe('Me Test', function() {
           email: config.mailgun.to
         })
         .expect(204)
-        .end(function(err, res) {
+        .end(function (err, res) {
           log(err, res, done);
         });
 
@@ -34,14 +36,14 @@ describe('Me Test', function() {
 
   });
 
-  describe('connected', function() {
+  describe('connected', function () {
 
     rest.login();
 
     it('GET /me', done => {
       rest.get()
         .expect(200)
-        .end(function(err, res) {
+        .end(function (err, res) {
           log(err, res, done, data => {
             expect(data).to.have.property('username');
           });
