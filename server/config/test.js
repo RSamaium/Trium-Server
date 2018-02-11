@@ -4,8 +4,5 @@ module.exports = {
   },
   email: {
     disable: true
-  },
-  mailgun: {
-      to: 'sam@webcreative5.net'
   }
 }

@@ -31,8 +31,9 @@ class Controller {
 
                 if (!validator.isMongoId(id)) {
                    if (self.slug) {
-                     let obj = {};
-                     obj[self.slug()] = id;
+                     const obj = {
+                         [self.slug()]: id
+                     }
                      query = self.entity.findOne(obj);
                    }
                    else {
@@ -76,7 +77,7 @@ class Controller {
 
                 req.parent = {
                     name: self.name,
-                    id: id
+                    id: entity._id
                 };
             })
             .then(function() {
@@ -403,7 +404,6 @@ class Controller {
 
             }
 
-
             req.entity.save(function(err) {
                 if (err) reject(err);
                 resolv(req.entity);
@@ -412,8 +412,23 @@ class Controller {
          });
 
         p.then(function() {
-            if (self.save) self.save(req.entity, req, res, next);
-            res.json(req.entity);
+            let ret = {}
+            if (self.save) {
+                ret = self.save(req.entity, req, res, next);
+            }
+            if (ret && ret.then) {
+                ret.then((ret) => {
+                    if (ret) {
+                        res.json(ret)
+                    }
+                    else {
+                        res.json(req.entity)
+                    }
+                })
+            }
+            else {
+                res.json(req.entity)
+            }
         })
         .catch(function(err) {
             next(err);

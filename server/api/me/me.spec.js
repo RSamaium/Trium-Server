@@ -25,7 +25,7 @@ describe('Me Test', function () {
       request(app)
         .post(`${rest.uri}/forgotten-password`)
         .send({
-          email: config.mailgun.to
+          email: 'c0b17f32e6384d7cd46@yopmail.com'
         })
         .expect(204)
         .end(function (err, res) {

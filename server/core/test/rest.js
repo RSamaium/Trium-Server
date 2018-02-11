@@ -34,7 +34,13 @@ class TestRest {
   }
 
   createUser(model) {
-    const email = config.mailgun.to || 'c0b17f32e6384d7cd46@yopmail.com';
+    let email
+    if (config.mailgun) {
+      email = config.mailgun.to
+    }
+    else {
+      email = 'c0b17f32e6384d7cd46@yopmail.com'
+    }
 
     model = model || this.app.get('Model.User');
 

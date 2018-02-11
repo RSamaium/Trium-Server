@@ -10,7 +10,7 @@ module.exports = function(app) {
 
     require("./middlewares/passport")(app);
     require("./middlewares/passport-strategies/local")(app);
-    require("./middlewares/passport-strategies/facebook")(app);
+    //require("./middlewares/passport-strategies/facebook")(app);
 
     router.post('/forgotten-password', me.forgottenPassword.bind(me));
     router.post('/reset-password', me.resetPassword.bind(me));

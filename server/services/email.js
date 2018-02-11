@@ -1,7 +1,7 @@
 const config = require('../config');
-const mailgun = require('mailgun-js')(config.mailgun);
+const mailgunInit = require('mailgun-js');
 const fs = require('fs');
-const {mjml2html} = require('mjml');
+const { mjml2html } = require('mjml');
 const htmlToText = require('html-to-text');
 const pug = require('pug');
 const _ = require('lodash');
@@ -10,7 +10,7 @@ const Languages = require('languages-js');
 
 module.exports = {
   mjml2html(template, data, language) {
-    return new Promise(function(resolv, reject) {
+    return new Promise(function (resolv, reject) {
       const emailPath = `${__dirname}/../templates/email`;
       fs.readFile(`${emailPath}/${template}`, 'utf-8', (err, file) => {
         if (err) {
@@ -37,44 +37,50 @@ module.exports = {
     });
   },
   send(params, language) {
+  
+    if (!config.mailgun) {
+      return
+    }
 
-      const mailgunPromise = () => {
-        if (config.get('email', 'disable') === true) {
-          return Promise.resolve();
-        }
-        return new Promise(function(resolv, reject) {
-            if (params.html) {
-              params.text = htmlToText.fromString(params.html);
-            }
-            mailgun.messages().send(params, (error, body) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-                resolv(body);
-            });
-        });
+    let mailgun = mailgunInit(config.mailgun)
+
+    const mailgunPromise = () => {
+      if (config.get('email', 'disable') === true) {
+        return Promise.resolve();
       }
-      return new Promise((resolv, reject) =>  {
-
-          if (!params.from) params.from = config.mailgun.from;
-          if (!params.to) params.to = config.mailgun.to;
-
-          if (params.template) {
-            if (!params.template.name) {
-              params.template = {
-                name: params.template
-              }
-            }
-            let {name, data} = params.template;
-            return this.mjml2html(name, data, language).then(html => {
-              params.html = html;
-              delete params.template;
-              resolv();
-            }).catch(reject)
+      return new Promise(function (resolv, reject) {
+        if (params.html) {
+          params.text = htmlToText.fromString(params.html);
+        }
+        mailgun.messages().send(params, (error, body) => {
+          if (error) {
+            reject(error);
+            return;
           }
-          resolv();
+          resolv(body);
+        });
+      });
+    }
+    return new Promise((resolv, reject) => {
 
-      }).then(mailgunPromise)
+      if (!params.from) params.from = config.mailgun.from;
+      if (!params.to) params.to = config.mailgun.to;
+
+      if (params.template) {
+        if (!params.template.name) {
+          params.template = {
+            name: params.template
+          }
+        }
+        let { name, data } = params.template;
+        return this.mjml2html(name, data, language).then(html => {
+          params.html = html;
+          delete params.template;
+          resolv();
+        }).catch(reject)
+      }
+      resolv();
+
+    }).then(mailgunPromise)
   }
 }
